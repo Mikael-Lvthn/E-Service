@@ -104,13 +104,13 @@
         const currentIndex = tabOrder.indexOf(currentTabId);
         if (currentIndex < tabOrder.length - 1) {
             const nextTabId = tabOrder[currentIndex + 1];
-            return `<button data-next-tab="${nextTabId}" class="next-tab-btn continue-btn mt-8 w-full md:w-auto">Next &rarr;</button>`;
+            return `<button data-next-tab="${nextTabId}" class="next-tab-btn continue-btn">Next &rarr;</button>`;
         }
         return '';
     };
 
     const createHomeButton = () => {
-        return `<a href="index.html" class="continue-btn mt-8 w-full md:w-auto">Home</a>`;
+        return `<a href="index.html" class="continue-btn">Home</a>`;
     };
     
     const updateApplicationContent = (service, type) => {
@@ -123,12 +123,12 @@
         let pdfsHtml = '';
         if (applicationPdfs && applicationPdfs.length > 0 && applicationPdfs[0]) {
             pdfsHtml += `
-                <h4 class="guide-heading text-xl mt-8">Official Application Form</h4>
+                <h4 class="guide-heading application-form-heading">Official Application Form</h4>
                 <div class="pdf-viewer-container" style="width: 100%; height: 700px; border: 1px solid #e2e8f0; border-radius: 0.375rem; overflow: hidden;">
                     <iframe src="${applicationPdfs[0]}#toolbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
                 </div>
-                <p class="guide-text text-sm mt-2">View the official application form above. You can also download it and other related forms below.</p>
-                <div class="pdf-download-section mt-4 flex flex-wrap justify-center gap-4">
+                <p class="guide-text application-form-text">View the official application form above. You can also download it and other related forms below.</p>
+                <div class="pdf-download-section">
             `;
             applicationPdfs.forEach((pdfPath) => {
                 const pdfFileName = pdfPath.substring(pdfPath.lastIndexOf('/') + 1);
@@ -136,7 +136,7 @@
             });
             pdfsHtml += '</div>';
         } else {
-            pdfsHtml = `<p class="mt-4 text-gray-600">No downloadable application form available for this selection. Please visit the responsible department for the official form.</p>`;
+            pdfsHtml = `<p class="application-no-download-text">No downloadable application form available for this selection. Please visit the responsible department for the official form.</p>`;
         }
 
         const uploaderHtml = createUploadUI(
@@ -148,9 +148,9 @@
 
         applicationContentDiv.innerHTML = `
             <h3 class="upload-heading">Online Application for ${serviceTitle}</h3>
-            <p class="upload-description">This overview is for: <strong class="text-indigo-600">${type}</strong>.</p>
-            <div class="guide-content-wrapper mt-8 pt-4 border-t border-gray-200">${pdfsHtml}</div>
-            <div class="mt-12 pt-8 border-t-2 border-dashed border-gray-300">${uploaderHtml}</div>
+            <p class="upload-description">This overview is for: <strong class="highlight-text-blue">${type}</strong>.</p>
+            <div class="guide-content-wrapper guide-content-wrapper-border">${pdfsHtml}</div>
+            <div class="upload-section-divider">${uploaderHtml}</div>
         `;
         addUploadFunctionality(true);
     };
@@ -164,17 +164,17 @@
 
         if (type) {
             const guideImages = getFilePaths(type, 'guideImages');
-            imagesHtml = '<div class="guide-images-grid grid grid-cols-1 md:grid-cols-2 gap-6">';
+            imagesHtml = '<div class="guide-images-grid">';
             guideImages.forEach((imagePath, index) => {
                 const imageFileName = imagePath.substring(imagePath.lastIndexOf('/') + 1);
                 imagesHtml += `
-                    <div class="guide-image-item border rounded-lg overflow-hidden shadow-sm">
+                    <div class="guide-image-item">
                         <a href="${imagePath}" target="_blank" title="View full image">
-                            <img src="${imagePath}" alt="Process Overview ${index + 1} for ${type}" class="guide-image w-full h-auto object-cover">
+                            <img src="${imagePath}" alt="Process Overview ${index + 1} for ${type}" class="guide-image">
                         </a>
-                        <div class="flex justify-between items-center text-sm p-3 bg-gray-50">
-                            <span class="text-gray-700">${imageFileName}</span>
-                            <a href="${imagePath}" download="${imageFileName}" class="font-medium text-blue-600 hover:text-blue-500">Download</a>
+                        <div class="guide-image-info-bar">
+                            <span class="guide-image-filename">${imageFileName}</span>
+                            <a href="${imagePath}" download="${imageFileName}" class="guide-image-download-btn">Download</a>
                         </div>
                     </div>
                 `;
@@ -184,9 +184,9 @@
 
         guideContentDiv.innerHTML = `
             <h3 class="guide-heading">Process Overview</h3>
-            <p class="guide-text">Review the general process below. Please select a specific document type to see the detailed guide. Current type selected: <strong class="text-indigo-600">${type || 'None'}</strong>.</p>
+            <p class="guide-text">Review the general process below. Please select a specific document type to see the detailed guide. Current type selected: <strong class="highlight-text-blue">${type || 'None'}</strong>.</p>
             ${dropdownHtml}
-            <div class="mt-6">${imagesHtml}</div>
+            <div class="guide-images-container">${imagesHtml}</div>
             ${type ? createNextButton('guide') : ''}
         `;
     };
@@ -205,189 +205,209 @@
                     <div class="pdf-viewer-container" style="width: 100%; height: 700px; border: 1px solid #e2e8f0; border-radius: 0.375rem; overflow: hidden;">
                         <iframe src="${pdfPath}#toolbar=0" style="width: 100%; height: 100%; border: none;"></iframe>
                     </div>
-                    <div class="text-center mt-4">
+                    <div class="requirements-download-section">
                         <a href="${pdfPath}" download="${pdfFileName}" class="continue-btn">${pdfFileName}</a>
                     </div>
                 `;
             } else {
-                pdfHtml = `<p class="mt-4 text-gray-600">No requirements PDF available for this selection.</p>`;
+                pdfHtml = `<p class="requirements-no-pdf-text">No requirements PDF available for this selection.</p>`;
             }
         }
 
         requirementsContentDiv.innerHTML = `
             <h3 class="guide-heading">Documentary Requirements</h3>
-            <p class="guide-text">Please prepare all the required documents listed for: <strong class="text-indigo-600">${type || 'None'}</strong>.</p>
-            <div class="mt-6">${pdfHtml}</div>
+            <p class="guide-text">Please prepare all the required documents listed for: <strong class="highlight-text-blue">${type || 'None'}</strong>.</p>
+            <div class="requirements-pdf-container">${pdfHtml}</div>
             ${type ? createNextButton('requirements') : ''}
         `;
     };
 
-    const contentData = {
-        permits: {
-            title: 'Permits',
-            guideDropdownHtml: `<div class="mt-4"><label for="permit-type-select" class="block text-sm font-medium text-gray-700 mb-2">Select Permit Type:</label><select id="permit-type-select" name="permit-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm"><option value="">-- Please Select --</option><option value="Building Permit">Building Permit</option><option value="Electrical Permit">Electrical Permit</option><option value="Sanitary Permit">Sanitary Permit</option><option value="Demolition Permit">Demolition Permit</option><option value="Business Permit">Business Permit</option></select></div>`,
-            processHtml: () => `
-                <h3 class="upload-heading">General Permit Application Process</h3>
-                <ol class="list-decimal list-inside mt-4 space-y-3 text-gray-700">
-                    <li><strong>Application & Document Submission:</strong> Secure and fill out the application form. Compile all required documents, which may include technical plans, previous clearances, and identification. Submit the complete package to the receiving window of the responsible office.</li>
-                    <li><strong>Assessment & Evaluation:</strong> An officer will review your documents for completeness and compliance with regulations. For technical permits (e.g., Building, Electrical), a detailed evaluation of plans will be conducted by an engineer or building official.</li>
-                    <li><strong>Fee Assessment & Payment:</strong> Once the evaluation is complete, the corresponding fees will be assessed. Proceed to the Municipal Treasurer's Office to pay the required fees and secure an Official Receipt.</li>
-                    <li><strong>Inspection (if applicable):</strong> Some permits, particularly for building and business operations, require an on-site inspection to ensure compliance with safety, sanitation, and zoning regulations.</li>
-                    <li><strong>Approval & Issuance:</strong> Upon successful evaluation, payment, and inspection, your application will be forwarded for final approval. Once signed, the permit will be released to you.</li>
-                </ol>
-                ${createNextButton('process')}`,
-            departmentHtml: () => `
-                <h3 class="upload-heading">Departments for Permits</h3>
-                <p class="upload-description">Permits are handled by specialized offices within the Municipal Hall. Please direct your inquiries to the appropriate department.</p>
-                <div class="mt-6 space-y-6">
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Office of the Building Official (OBO)</h4>
-                        <p class="text-gray-600 mt-1">This office is responsible for enforcing the National Building Code and related regulations. They process and issue permits related to construction and structural work.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Building Permit</li>
-                            <li>Electrical Permit</li>
-                            <li>Sanitary Permit</li>
-                            <li>Demolition Permit</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Business Permit and Licensing Office (BPLO)</h4>
-                        <p class="text-gray-600 mt-1">The BPLO handles the registration and regulation of all business establishments operating within the municipality.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Business Permit (New and Renewal)</li>
-                        </ul>
-                    </div>
+const contentData = {
+    permits: {
+        title: 'Permits',
+        guideDropdownHtml: `<div class="dropdown-container"><label for="permit-type-select" class="dropdown-label">Select Permit Type:</label><select id="permit-type-select" name="permit-type" class="dropdown-select"><option value="">-- Please Select --</option><option value="Building Permit">Building Permit</option><option value="Electrical Permit">Electrical Permit</option><option value="Sanitary Permit">Sanitary Permit</option><option value="Demolition Permit">Demolition Permit</option><option value="Business Permit">Business Permit</option></select></div>`,
+        processHtml: () => `
+            <h3 class="upload-heading">General Permit Application Process</h3>
+            <ol class="process-list">
+                <li><strong>Application & Document Submission:</strong> Secure and fill out the application form. Compile all required documents, which may include technical plans, previous clearances, and identification. Submit the complete package to the receiving window of the responsible office.</li>
+                <li><strong>Assessment & Evaluation:</strong> An officer will review your documents for completeness and compliance with regulations. For technical permits (e.g., Building, Electrical), a detailed evaluation of plans will be conducted by an engineer or building official.</li>
+                <li><strong>Fee Assessment & Payment:</strong> Once the evaluation is complete, the corresponding fees will be assessed. Proceed to the Municipal Treasurer's Office to pay the required fees and secure an Official Receipt.</li>
+                <li><strong>Inspection (if applicable):</strong> Some permits, particularly for building and business operations, require an on-site inspection to ensure compliance with safety, sanitation, and zoning regulations.</li>
+                <li><strong>Approval & Issuance:</strong> Upon successful evaluation, payment, and inspection, your application will be forwarded for final approval. Once signed, the permit will be released to you.</li>
+            </ol>
+            ${createNextButton('process')}`,
+        departmentHtml: () => `
+            <h3 class="upload-heading">Departments for Permits</h3>
+            <p class="upload-description">Permits are handled by specialized offices. Please direct your inquiries to the appropriate department based on your application.</p>
+            <div class="department-info-container">
+                <div>
+                    <h4 class="department-heading">Municipal Engineering Office / Office of the Building Official (OBO)</h4>
+                    <p class="department-contact"><strong>Head:</strong> Engr. Norberto Cancino</p>
+                    <p class="department-description">This office is responsible for enforcing the National Building Code and related regulations. They process and issue permits related to construction and structural work.</p>
+                    <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Building Permit</li>
+                        <li>Electrical Permit</li>
+                        <li>Demolition Permit</li>
+                    </ul>
                 </div>
-                <div class="text-center">${createHomeButton()}</div>`
-        },
-        certificates: {
-            title: 'Certificates',
-            guideDropdownHtml: `<div class="mt-4"><label for="certificate-type-select" class="block text-sm font-medium text-gray-700 mb-2">Select Certificate Type:</label><select id="certificate-type-select" name="certificate-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm rounded-md shadow-sm"><option value="">-- Please Select --</option><option value="Birth Certificate">Birth Certificate</option><option value="Death Certificate">Death Certificate</option><option value="Certificate of Indigency">Certificate of Indigency</option><option value="CENOMAR Certificate">CENOMAR Certificate</option><option value="Medical Certificate">Medical Certificate</option></select></div>`,
-            processHtml: () => `
-                <h3 class="upload-heading">General Certificate Application Process</h3>
-                <ol class="list-decimal list-inside mt-4 space-y-3 text-gray-700">
-                    <li><strong>Request and Verification:</strong> Approach the relevant office (e.g., Local Civil Registrar or Barangay Hall) and state your request. Provide necessary details for the clerk to search the official records.</li>
-                    <li><strong>Fill Out Request Form:</strong> Complete a request form with the full name, date of event (birth, marriage, death), and other pertinent information. Present a valid ID for verification.</li>
-                    <li><strong>Fee Payment:</strong> Pay the processing fee at the Municipal Treasurer's Office or the designated collection officer and get an Official Receipt.</li>
-                    <li><strong>Processing and Printing:</strong> The clerk will process your request, print the certificate on official security paper (for civil registry documents), and have it signed by the authorized official.</li>
-                    <li><strong>Release:</strong> The certified copy of the document will be released to you upon presentation of the official receipt.</li>
-                </ol>
-                ${createNextButton('process')}`,
-            departmentHtml: () => `
-                <h3 class="upload-heading">Departments for Certificates</h3>
-                <p class="upload-description">Certificates are issued by the office that holds the corresponding official records.</p>
-                <div class="mt-6 space-y-6">
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Local Civil Registrar (LCR)</h4>
-                        <p class="text-gray-600 mt-1">The LCR is responsible for recording vital life events and serves as the local repository for these records.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Birth Certificate</li>
-                            <li>Marriage Certificate</li>
-                            <li>Death Certificate</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Barangay Hall</h4>
-                        <p class="text-gray-600 mt-1">Your local Barangay Hall issues certificates for community-level verification and is often the first step for many other municipal transactions.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Certificate of Residency</li>
-                        </ul>
-                    </div>
+                <div>
+                    <h4 class="department-heading">Business Permit and Licensing Office (BPLO)</h4>
+                    <p class="department-description">The BPLO handles the registration and regulation of all business establishments operating within the municipality. This office is typically under the Office of the Mayor.</p>
+                    <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Business Permit (New and Renewal)</li>
+                    </ul>
                 </div>
-                <div class="text-center">${createHomeButton()}</div>`
-        },
-        clearances: {
-            title: 'Clearances',
-            guideDropdownHtml: `<div class="mt-4"><label for="clearance-type-select" class="block text-sm font-medium text-gray-700 mb-2">Select Clearance Type:</label><select id="clearance-type-select" name="clearance-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm rounded-md shadow-sm"><option value="">-- Please Select --</option><option value="Certificate of Environment Clearance">Certificate of Environment Clearance</option><option value="Police Clearance">Police Clearance</option><option value="Fire Safety Evaluation Clearance">Fire Safety Evaluation Clearance</option></select></div>`,
-            processHtml: () => `
-                <h3 class="upload-heading">General Clearance Application Process</h3>
-                <p class="upload-description">A clearance is an official document stating that a person or entity has no outstanding issues or obligations in the jurisdiction of the issuing body.</p>
-                <ol class="list-decimal list-inside mt-4 space-y-3 text-gray-700">
-                    <li><strong>Secure Application Form:</strong> Obtain the application form from the respective office (Barangay, Police Station, or Mayor's Office).</li>
-                    <li><strong>Submit Requirements:</strong> Present the completed form along with necessary requirements, which typically include a valid ID, proof of residency (like a Barangay Clearance), and the official receipt for payment.</li>
-                    <li><strong>Verification/Background Check:</strong> The office will check its records for any outstanding issues, liabilities, or criminal records associated with your name.</li>
-                    <li><strong>Biometrics (if applicable):</strong> Some clearances, like those from the police or NBI, require capturing your photograph, fingerprints, and signature.</li>
-                    <li><strong>Issuance:</strong> If no issues are found, the clearance certificate will be printed, signed, and issued to you.</li>
-                </ol>
-                ${createNextButton('process')}`,
-            departmentHtml: () => `
-                <h3 class="upload-heading">Departments for Clearances</h3>
-                <p class="upload-description">Clearances are issued by different local and national government units to certify a person's standing.</p>
-                <div class="mt-6 space-y-6">
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Barangay Hall</h4>
-                        <p class="text-gray-600 mt-1">This is the most local level of clearance, certifying you are a resident in good standing within your community.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Barangay Clearance</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Philippine National Police (PNP) - Urbiztondo</h4>
-                        <p class="text-gray-600 mt-1">The local PNP station issues police clearances to certify that an individual has no pending criminal cases within the municipality.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Police Clearance</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Office of the Mayor</h4>
-                        <p class="text-gray-600 mt-1">A Mayor's Clearance is often required for employment, business applications, or other official transactions to certify compliance with municipal ordinances.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Mayor's Clearance</li>
-                        </ul>
-                    </div>
-                     <div>
-                        <h4 class="text-lg font-semibold text-gray-800">National Bureau of Investigation (NBI)</h4>
-                        <p class="text-gray-600 mt-1">The NBI Clearance is a national document certifying that a person has no pending criminal case in the entire Philippines. Applications are done online, but you may need to visit a designated NBI center for biometrics.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>NBI Clearance (National Agency)</li>
-                        </ul>
-                    </div>
+                <div>
+                    <h4 class="department-heading">Rural Health Office</h4>
+                     <p class="department-contact"><strong>Head:</strong> Dra. Catherine B. Licuanan</p>
+                    <p class="department-description">The municipal health office ensures that establishments comply with the Sanitation Code and public health standards.</p>
+                    <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Sanitary Permit</li>
+                    </ul>
                 </div>
-                <div class="text-center">${createHomeButton()}</div>`
-        },
-        licenses: {
-            title: 'Licenses',
-            guideDropdownHtml: `<div class="mt-4"><label for="license-type-select" class="block text-sm font-medium text-gray-700 mb-2">Select License Type:</label><select id="license-type-select" name="license-type" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm rounded-md shadow-sm"><option value="">-- Please Select --</option><option value="Marriage License">Marriage License</option></select></div>`,
-            processHtml: () => `
-                <h3 class="upload-heading">General License Application Process</h3>
-                <p class="upload-description">A license is a formal permission from an authoritative body to do, use, or own something. The process varies significantly depending on the type of license.</p>
-                <ol class="list-decimal list-inside mt-4 space-y-3 text-gray-700">
-                    <li><strong>Fulfill Pre-requisites:</strong> This is the most critical step. It may involve passing an exam (Professional/Driver's License), completing other permits (Business License), or attending seminars.</li>
-                    <li><strong>Submit Application & Requirements:</strong> File an application with the responsible agency along with all supporting documents.</li>
-                    <li><strong>Assessment and Payment:</strong> Pay the required fees for application, processing, and the license itself.</li>
-                    <li><strong>Evaluation / Examination:</strong> Your application and qualifications will be evaluated. This may involve written or practical examinations.</li>
-                    <li><strong>Issuance of License:</strong> Once all requirements are met and assessments are passed, the license (often in card or certificate form) will be issued. Licenses are typically valid for a specific period and require renewal.</li>
-                </ol>
-                ${createNextButton('process')}`,
-            departmentHtml: () => `
-                <h3 class="upload-heading">Departments for Licenses</h3>
-                <p class="upload-description">Licenses are issued by various local and national agencies, depending on their purpose.</p>
-                <div class="mt-6 space-y-6">
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Business Permit and Licensing Office (BPLO)</h4>
-                        <p class="text-gray-600 mt-1">The BPLO issues the primary license required to legally operate a business within Urbiztondo, often in conjunction with the Mayor's Permit.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Business License (New and Renewal)</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Professional Regulation Commission (PRC)</h4>
-                        <p class="text-gray-600 mt-1">The PRC is a national government agency responsible for the administration, implementation, and enforcement of regulatory policies on the regulation and licensing of various professions.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Professional License (National Agency)</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-gray-800">Land Transportation Office (LTO)</h4>
-                        <p class="text-gray-600 mt-1">The LTO is the national agency responsible for issuing driver's licenses and registering motor vehicles.</p>
-                        <ul class="list-disc list-inside mt-2 text-gray-700">
-                            <li>Driver's License (National Agency)</li>
-                        </ul>
-                    </div>
+            </div>
+            <div class="home-button-container">${createHomeButton()}</div>`
+    },
+    certificates: {
+        title: 'Certificates',
+        guideDropdownHtml: `<div class="dropdown-container"><label for="certificate-type-select" class="dropdown-label">Select Certificate Type:</label><select id="certificate-type-select" name="certificate-type" class="dropdown-select"><option value="">-- Please Select --</option><option value="Birth Certificate">Birth Certificate</option><option value="Death Certificate">Death Certificate</option><option value="Certificate of Indigency">Certificate of Indigency</option><option value="CENOMAR Certificate">CENOMAR Certificate</option><option value="Medical Certificate">Medical Certificate</option></select></div>`,
+        processHtml: () => `
+            <h3 class="upload-heading">General Certificate Application Process</h3>
+            <ol class="process-list">
+                <li><strong>Request and Verification:</strong> Approach the relevant office (e.g., Local Civil Registrar or Barangay Hall) and state your request. Provide necessary details for the clerk to search the official records.</li>
+                <li><strong>Fill Out Request Form:</strong> Complete a request form with the full name, date of event (birth, marriage, death), and other pertinent information. Present a valid ID for verification.</li>
+                <li><strong>Fee Payment:</strong> Pay the processing fee at the Municipal Treasurer's Office or the designated collection officer and get an Official Receipt.</li>
+                <li><strong>Processing and Printing:</strong> The clerk will process your request, print the certificate on official security paper (for civil registry documents), and have it signed by the authorized official.</li>
+                <li><strong>Release:</strong> The certified copy of the document will be released to you upon presentation of the official receipt.</li>
+            </ol>
+            ${createNextButton('process')}`,
+        departmentHtml: () => `
+            <h3 class="upload-heading">Departments for Certificates</h3>
+            <p class="upload-description">Certificates are issued by the office that holds the corresponding official records.</p>
+            <div class="department-info-container">
+                <div>
+                    <h4 class="department-heading">Local Civil Registrar (LCR) Office</h4>
+                    <p class="department-description">The LCR is responsible for recording vital life events (births, marriages, deaths) and serves as the local repository for these records.</p>
+                     <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Birth Certificate</li>
+                        <li>Death Certificate</li>
+                        <li>CENOMAR Certificate</li>
+                    </ul>
                 </div>
-                <div class="text-center">${createHomeButton()}</div>`
-        }
-    };
+                 <div>
+                    <h4 class="department-heading">Rural Health Office</h4>
+                    <p class="department-contact"><strong>Head:</strong> Dra. Catherine B. Licuanan</p>
+                    <p class="department-description">The Rural Health Unit provides health services to the community and issues certificates based on medical records or examinations.</p>
+                     <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Medical Certificate</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="department-heading">Municipal Social Welfare and Development Office (MSWDO)</h4>
+                     <p class="department-contact"><strong>Head:</strong> Mercedes Bigay</p>
+                    <p class="department-description">The MSWDO provides social services and assistance to individuals and families in need, including assessments for indigency.</p>
+                     <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Certificate of Indigency</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="home-button-container">${createHomeButton()}</div>`
+    },
+    clearances: {
+        title: 'Clearances',
+        guideDropdownHtml: `<div class="dropdown-container"><label for="clearance-type-select" class="dropdown-label">Select Clearance Type:</label><select id="clearance-type-select" name="clearance-type" class="dropdown-select"><option value="">-- Please Select --</option><option value="Certificate of Environment Clearance">Certificate of Environment Clearance</option><option value="Police Clearance">Police Clearance</option><option value="Fire Safety Evaluation Clearance">Fire Safety Evaluation Clearance</option></select></div>`,
+        processHtml: () => `
+            <h3 class="upload-heading">General Clearance Application Process</h3>
+            <p class="upload-description">A clearance is an official document stating that a person or entity has no outstanding issues or obligations in the jurisdiction of the issuing body.</p>
+            <ol class="process-list">
+                <li><strong>Secure Application Form:</strong> Obtain the application form from the respective office (Barangay, Police Station, or Mayor's Office).</li>
+                <li><strong>Submit Requirements:</strong> Present the completed form along with necessary requirements, which typically include a valid ID, proof of residency (like a Barangay Clearance), and the official receipt for payment.</li>
+                <li><strong>Verification/Background Check:</strong> The office will check its records for any outstanding issues, liabilities, or criminal records associated with your name.</li>
+                <li><strong>Biometrics (if applicable):</strong> Some clearances, like those from the police or NBI, require capturing your photograph, fingerprints, and signature.</li>
+                <li><strong>Issuance:</strong> If no issues are found, the clearance certificate will be printed, signed, and issued to you.</li>
+            </ol>
+            ${createNextButton('process')}`,
+        departmentHtml: () => `
+            <h3 class="upload-heading">Departments for Clearances</h3>
+            <p class="upload-description">Clearances are issued by different local and national government units to certify a person's or entity's standing.</p>
+            <div class="department-info-container">
+                <div>
+                    <h4 class="department-heading">Philippine National Police (PNP) / Police Clearance Desk</h4>
+                    <p class="department-description">The local PNP station issues police clearances to certify that an individual has no pending criminal cases within the municipality. This is usually coordinated with the Mayor's Office.</p>
+                     <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Police Clearance</li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="department-heading">Municipal Environmental Office</h4>
+                    <p class="department-description">This office is tasked with implementing environmental laws and managing programs for environmental protection and sustainability.</p>
+                     <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Certificate of Environment Clearance</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="department-heading">Bureau of Fire Protection (BFP) / Municipal Fire Safety Desk</h4>
+                    <p class="department-description">The BFP is responsible for fire prevention and suppression, as well as enforcing the Fire Code of the Philippines. They issue clearances related to fire safety inspections.</p>
+                    <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Fire Safety Evaluation Clearance</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="home-button-container">${createHomeButton()}</div>`
+    },
+    licenses: {
+        title: 'Licenses',
+        guideDropdownHtml: `<div class="dropdown-container"><label for="license-type-select" class="dropdown-label">Select License Type:</label><select id="license-type-select" name="license-type" class="dropdown-select"><option value="">-- Please Select --</option><option value="Marriage License">Marriage License</option></select></div>`,
+        processHtml: () => `
+            <h3 class="upload-heading">General License Application Process</h3>
+            <p class="upload-description">A license is a formal permission from an authoritative body to do, use, or own something. The process varies significantly depending on the type of license.</p>
+            <ol class="process-list">
+                <li><strong>Fulfill Pre-requisites:</strong> This is the most critical step. It may involve passing an exam (Professional/Driver's License), completing other permits (Business License), or attending seminars.</li>
+                <li><strong>Submit Application & Requirements:</strong> File an application with the responsible agency along with all supporting documents.</li>
+                <li><strong>Assessment and Payment:</strong> Pay the required fees for application, processing, and the license itself.</li>
+                <li><strong>Evaluation / Examination:</strong> Your application and qualifications will be evaluated. This may involve written or practical examinations.</li>
+                <li><strong>Issuance of License:</strong> Once all requirements are met and assessments are passed, the license (often in card or certificate form) will be issued. Licenses are typically valid for a specific period and require renewal.</li>
+            </ol>
+            ${createNextButton('process')}`,
+        departmentHtml: () => `
+            <h3 class="upload-heading">Departments for Licenses</h3>
+            <p class="upload-description">Licenses are issued by various local and national agencies, depending on their purpose.</p>
+            <div class="department-info-container">
+                 <div>
+                    <h4 class="department-heading">Local Civil Registrar (LCR) Office</h4>
+                    <p class="department-description">Before a marriage can be solemnized, the LCR processes applications and issues the Marriage License, certifying that the couple is eligible to marry.</p>
+                     <p class="department-files-title"><strong>Files Managed in this Category:</strong></p>
+                    <ul class="department-list">
+                        <li>Marriage License</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="department-heading">Business Permit and Licensing Office (BPLO)</h4>
+                    <p class="department-description">The BPLO issues the primary license required to legally operate a business within the municipality.</p>
+                    <ul class="department-list">
+                        <li>Business License (Note: The main application is in the 'Permits' section)</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="department-heading">Land Transportation Office (LTO)</h4>
+                    <p class="department-description">The LTO is the national agency responsible for issuing driver's licenses and registering motor vehicles.</p>
+                    <ul class="department-list">
+                        <li>Driver's License (National Agency)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="home-button-container">${createHomeButton()}</div>`
+    }
+};
 
     const createGuideUI = () => `<div id="dynamic-guide-content"></div>`;
     const createRequirementsUI = () => `<div id="dynamic-requirements-content"></div>`;
@@ -400,7 +420,7 @@
         let nextButtonHtml = '';
         
         if (isApplicationTab) {
-            nextButtonHtml = '<div id="next-btn-container" class="mt-4 text-center"></div>';
+            nextButtonHtml = '<div id="next-btn-container" class="next-button-container"></div>';
         } else {
             nextButtonHtml = createNextButton(nextButtonTab);
         }
@@ -409,8 +429,8 @@
         <div>
             <h3 class="upload-heading">${heading}</h3>
             <p class="upload-description">${description}</p>
-            <div class="max-w-xl mx-auto mt-8">
-                <p class="upload-formats-text text-center mb-4">Accepted formats: PDF, JPEG, PNG. Max size: 5MB per file.</p>
+            <div class="max-w-xl mx-auto upload-area-spacing">
+                <p class="upload-formats-text">Accepted formats: PDF, JPEG, PNG. Max size: 5MB per file.</p>
                 <input type="file" id="file-input" multiple class="visually-hidden-input">
                 <label for="file-input" id="drop-zone" class="drop-zone">
                     <svg class="drop-zone-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 0 01-4-4V7a4 4 0 014-4h.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414A1 1 0 0116.414 3H17a4 4 0 014 4v5a4 4 0 01-4 4h-1.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293L8.293 16.293A1 1 0 007.586 16H7z"></path></svg>
@@ -429,21 +449,17 @@
         </div>`;
     };
 
-    // --- MODIFIED: Added more checks for sequential tab navigation ---
     const showTab = (tabId) => {
-        // Check 1: Must have a service type selected for any tab beyond 'guide'
         if (!selectedServiceType && ['requirements', 'application', 'upload', 'process', 'department'].includes(tabId)) {
             alert('Please select a specific document type from the "Step-by-Step Guide" tab first.');
             return;
         }
 
-        // Check 2: Must have confirmed application form to see 'upload' tab and beyond
         if (['upload', 'process', 'department'].includes(tabId) && !isApplicationFormConfirmed) {
             alert('Please confirm your application form in the "Online Application" tab before proceeding.');
             return;
         }
 
-        // Check 3: Must have "uploaded" supporting docs to see 'process' and 'department'
         if (['process', 'department'].includes(tabId) && !isSupportingDocsUploaded) {
             alert('Please complete the "Upload Supporting Document/s" step before proceeding.');
             return;
@@ -465,7 +481,7 @@
                 'Upload Supporting Document/s',
                 'Here you can upload any additional documentary requirements. Please see the "Requirements" tab to confirm all necessary files.',
                 'upload',
-                false // isApplicationTab = false
+                false 
             );
             addUploadFunctionality(false);
         } else if (tabId === 'process') {
@@ -481,7 +497,6 @@
         document.querySelector(`.detail-tab[data-tab="${tabId}"]`).classList.add('detail-tab-active');
     };
     
-    // --- MODIFIED: Reset new state variable on change ---
     document.body.addEventListener('change', function(event) {
         let dropdownId;
         if (currentService === 'permits') dropdownId = 'permit-type-select';
@@ -492,7 +507,7 @@
         if (event.target.id === dropdownId) {
             selectedServiceType = event.target.value;
             isApplicationFormConfirmed = false; 
-            isSupportingDocsUploaded = false; // --- NEW: Reset state
+            isSupportingDocsUploaded = false;
             applicationFiles.clear();
             supportingFiles.clear();
             const activeTab = document.querySelector('.detail-tab-active').dataset.tab;
@@ -520,7 +535,6 @@
         });
     });
 
-    // --- MODIFIED: Reset new state variable when going back ---
     backBtn.addEventListener('click', () => {
         serviceDetailView.style.display = 'none';
         serviceSelectionView.style.display = 'block';
@@ -529,7 +543,7 @@
         applicationFiles.clear();
         supportingFiles.clear();
         isApplicationFormConfirmed = false;
-        isSupportingDocsUploaded = false; // --- NEW: Reset state
+        isSupportingDocsUploaded = false; 
     });
 
     detailTabs.forEach(tab => {
@@ -539,114 +553,116 @@
         });
     });
     
-    // --- MODIFIED: Update state on successful "upload" ---
-    function addUploadFunctionality(isApplicationTab = false) {
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('file-input');
-        const fileList = document.getElementById('file-list');
-        const uploadBtn = document.getElementById('upload-btn');
-        const uploadFeedback = document.getElementById('upload-feedback');
-        
-        const currentFiles = isApplicationTab ? applicationFiles : supportingFiles;
+function addUploadFunctionality(isApplicationTab = false) {
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileList = document.getElementById('file-list');
+    const uploadBtn = document.getElementById('upload-btn');
+    const uploadFeedback = document.getElementById('upload-feedback');
+    
+    const currentFiles = isApplicationTab ? applicationFiles : supportingFiles;
 
-        const updateFileList = () => {
-            fileList.innerHTML = '';
-            if (currentFiles.size === 0) {
-                fileList.innerHTML = `<li id="no-files-message" class="no-files-message">No files selected.</li>`;
-                uploadBtn.disabled = true;
-            } else {
-                currentFiles.forEach((file, name) => {
-                    fileList.innerHTML += `<li class="file-item"><span class="file-item-name">${file.name}</span><button data-filename="${name}" class="remove-file-btn">&times;</button></li>`;
-                });
-                uploadBtn.disabled = false;
+    const updateFileList = () => {
+        fileList.innerHTML = '';
+        if (currentFiles.size === 0) {
+            fileList.innerHTML = `<li id="no-files-message" class="no-files-message">No files selected.</li>`;
+            uploadBtn.disabled = true;
+        } else {
+            currentFiles.forEach((file, name) => {
+                fileList.innerHTML += `<li class="file-item"><span class="file-item-name">${file.name}</span><button data-filename="${name}" class="remove-file-btn">&times;</button></li>`;
+            });
+            uploadBtn.disabled = false;
+        }
+    };
+
+    const handleFiles = (files) => {
+        for (const file of files) {
+            if (file.size > 5 * 1024 * 1024) {
+                alert(`File "${file.name}" exceeds the 5MB limit.`);
+                continue;
             }
-        };
-
-        const handleFiles = (files) => {
-            for (const file of files) {
-                if (file.size > 5 * 1024 * 1024) {
-                    alert(`File "${file.name}" exceeds the 5MB limit.`);
-                    continue;
-                }
-                const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
-                if (!allowedTypes.includes(file.type)) {
-                    alert(`File "${file.name}" has an unsupported format. Only PDF, JPEG, PNG are allowed.`);
-                    continue;
-                }
-                currentFiles.set(file.name, file);
+            const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
+            if (!allowedTypes.includes(file.type)) {
+                alert(`File "${file.name}" has an unsupported format. Only PDF, JPEG, PNG are allowed.`);
+                continue;
             }
-            updateFileList();
-        };
-
-        const uploadButtonClickHandler = () => {
-            uploadFeedback.style.display = 'block';
-
-            if (isApplicationTab) {
-                uploadFeedback.className = 'upload-feedback success';
-                uploadFeedback.innerHTML = `<p class="font-medium text-center p-2">Success! Application form confirmed. You may now proceed.</p>`;
-                isApplicationFormConfirmed = true;
-                uploadBtn.disabled = true; 
-
-                const nextBtnContainer = document.getElementById('next-btn-container');
-                if (nextBtnContainer) {
-                    nextBtnContainer.innerHTML = createNextButton('application');
-                }
-
-            } else {
-                const trackingNumber = `DOC${Math.floor(10000000 + Math.random() * 90000000)}`;
-                isSupportingDocsUploaded = true; // --- NEW: Set state to true
-                uploadFeedback.className = 'upload-feedback success';
-                uploadFeedback.innerHTML = `
-                    <div class="flex flex-col items-center justify-center text-center p-4">
-                        <p class="font-medium">Success! ${currentFiles.size} file(s) uploaded.</p>
-                        <p class="mt-2 text-sm">Please save your reference number for tracking your application status:</p>
-                        <div class="flex items-center gap-3 mt-2 bg-gray-100 py-2 px-4 rounded-lg">
-                            <strong id="tracking-number-display" class="text-lg text-gray-800">${trackingNumber}</strong>
-                            <button id="copy-tracking-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">COPY</button>
-                        </div>
-                        <p id="copy-feedback-upload" class="text-green-600 text-sm mt-2" style="display: none;">Copied to clipboard!</p>
-                    </div>`;
-                
-                const copyBtn = document.getElementById('copy-tracking-btn');
-                if (copyBtn) {
-                    copyBtn.addEventListener('click', () => {
-                        navigator.clipboard.writeText(trackingNumber).then(() => {
-                            const feedback = document.getElementById('copy-feedback-upload');
-                            if (feedback) {
-                                feedback.style.display = 'block';
-                                setTimeout(() => { feedback.style.display = 'none'; }, 2000);
-                            }
-                        }).catch(err => console.error('Failed to copy text: ', err));
-                    });
-                }
-                
-                currentFiles.clear();
-                updateFileList();
-            }
-        };
-        
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-        dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
-        
-        fileInput.addEventListener('change', () => { 
-            handleFiles(fileInput.files); 
-            fileInput.value = ''; 
-        });
-
-        fileList.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-file-btn')) {
-                if (isApplicationFormConfirmed && isApplicationTab) {
-                    alert("Application form is already confirmed. To change the file, please re-select the document type from the 'Step-by-Step' tab.");
-                    return;
-                }
-                currentFiles.delete(e.target.dataset.filename);
-                updateFileList();
-            }
-        });
-        
-        uploadBtn.addEventListener('click', uploadButtonClickHandler);
-
+            currentFiles.set(file.name, file);
+        }
         updateFileList();
-    }
+    };
+
+    const uploadButtonClickHandler = () => {
+        uploadFeedback.style.display = 'block';
+
+        if (isApplicationTab) {
+            uploadFeedback.className = 'upload-feedback success';
+            uploadFeedback.innerHTML = `<p class="upload-feedback-text">Success! Application form confirmed. You may now proceed.</p>`;
+            isApplicationFormConfirmed = true;
+            uploadBtn.disabled = true; 
+
+            const nextBtnContainer = document.getElementById('next-btn-container');
+            if (nextBtnContainer) {
+                nextBtnContainer.innerHTML = createNextButton('application');
+            }
+
+        } else {
+            const part1 = Math.floor(100 + Math.random() * 900);
+            const part2 = Math.floor(100 + Math.random() * 900); 
+            const trackingNumber = `DOC-${part1}-${part2}`;
+            
+            isSupportingDocsUploaded = true;
+            uploadFeedback.className = 'upload-feedback success';
+            uploadFeedback.innerHTML = `
+                <div class="upload-success-content">
+                    <p class="upload-feedback-text">Success! ${currentFiles.size} file(s) uploaded.</p>
+                    <p class="upload-tracking-instruction">Please save your reference number for tracking your application status:</p>
+                    <div class="tracking-number-display-container">
+                        <strong id="tracking-number-display" class="tracking-number-display">${trackingNumber}</strong>
+                        <button id="copy-tracking-btn" class="copy-tracking-btn-upload">COPY</button>
+                    </div>
+                    <p id="copy-feedback-upload" class="copy-feedback-message-upload">Copied to clipboard!</p>
+                </div>`;
+            
+            const copyBtn = document.getElementById('copy-tracking-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(trackingNumber).then(() => {
+                        const feedback = document.getElementById('copy-feedback-upload');
+                        if (feedback) {
+                            feedback.style.display = 'block';
+                            setTimeout(() => { feedback.style.display = 'none'; }, 2000);
+                        }
+                    }).catch(err => console.error('Failed to copy text: ', err));
+                });
+            }
+            
+            currentFiles.clear();
+            updateFileList();
+        }
+    };
+    
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
+    
+    fileInput.addEventListener('change', () => { 
+        handleFiles(fileInput.files); 
+        fileInput.value = ''; 
+    });
+
+    fileList.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-file-btn')) {
+            if (isApplicationFormConfirmed && isApplicationTab) {
+                alert("Application form is already confirmed. To change the file, please re-select the document type from the 'Step-by-Step' tab.");
+                return;
+            }
+            currentFiles.delete(e.target.dataset.filename);
+            updateFileList();
+        }
+    });
+    
+    uploadBtn.addEventListener('click', uploadButtonClickHandler);
+
+    updateFileList();
+}
 });
